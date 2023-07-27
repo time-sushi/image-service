@@ -13,14 +13,18 @@ export class ImageServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const bucket = new cdk.aws_s3.Bucket(this, 'time-sushi-image-service', {
-      bucketName: 'time-sushi-image-service',
-      accessControl: cdk.aws_s3.BucketAccessControl.PRIVATE
-    });
+    const bucket = new cdk.aws_s3.Bucket(
+      this,
+      'time-sushi-image-service-prod',
+      {
+        bucketName: 'time-sushi-image-service-prod',
+        accessControl: cdk.aws_s3.BucketAccessControl.PRIVATE
+      }
+    );
 
     new cdk.aws_cloudfront.Distribution(
       this,
-      'time-sushi-image-service-cloudfront',
+      'time-sushi-image-service-prod-cloudfront',
       {
         defaultBehavior: {
           origin: new cdk.aws_cloudfront_origins.S3Origin(bucket),
@@ -33,9 +37,9 @@ export class ImageServiceStack extends cdk.Stack {
 
     const lambda = new cdk.aws_lambda_nodejs.NodejsFunction(
       this,
-      'time-sushi-image-service-get-presigned-urls',
+      'time-sushi-image-service-prod-get-presigned-urls',
       {
-        functionName: 'time-sushi-image-service-get-presigned-urls',
+        functionName: 'time-sushi-image-service-prod-get-presigned-urls',
         memorySize: 128,
         runtime: Runtime.NODEJS_16_X,
         timeout: Duration.seconds(10),
@@ -50,9 +54,9 @@ export class ImageServiceStack extends cdk.Stack {
 
     const api = new cdk.aws_apigateway.RestApi(
       this,
-      'time-sushi-image-service-api',
+      'time-sushi-image-service-prod-api',
       {
-        restApiName: 'time-sushi-image-service-api',
+        restApiName: 'time-sushi-image-service-prod-api',
         defaultCorsPreflightOptions: {
           allowOrigins: cdk.aws_apigateway.Cors.ALL_ORIGINS,
           allowMethods: cdk.aws_apigateway.Cors.ALL_METHODS,
